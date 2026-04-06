@@ -1,0 +1,93 @@
+/* Page */
+.dashboard {
+  background: #f4f6f8;
+  min-height: 100vh;
+  padding: 30px;
+  display: flex;
+  justify-content: center;
+}
+
+/* Main container */
+.dashboard-container {
+  width: 100%;
+  max-width: 900px;
+}
+
+/* Title */
+.dashboard h2 {
+  margin-bottom: 20px;
+}
+
+/* Section */
+.section {
+  padding: 20px;
+  margin-bottom: 25px;
+  border-radius: 12px;
+}
+
+/* Inputs */
+.section input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+/* Buttons (fix width issue) */
+.section button {
+  padding: 10px 20px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.section button:hover {
+  background: #1e4ed8;
+}
+
+/* Assignment grid */
+.assignment-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+  margin-top: 10px;
+}
+
+/* Assignment card */
+.assignment-card {
+  background: #f9fafb;
+  padding: 15px;
+  border-radius: 10px;
+  border: 1px solid #eee;
+}
+
+/* Title */
+.assignment-card h4 {
+  margin: 0 0 5px 0;
+}
+
+/* Link */
+.assignment-card a {
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.assignment-card a:hover {
+  text-decoration: underline;
+}
+
+/* Submit button small */
+.assignment-card button {
+  margin-top: 10px;
+  width: 100%;
+}
+
+.main-card {
+  background: white;
+  padding: 25px;
+  border-radius: 14px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
