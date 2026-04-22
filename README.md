@@ -71,23 +71,23 @@ This project allows:
 
 ---
 
-## 🧱 Database Design
+## Database Design
 
 Main tables:
-- `user` – stores students/admins
-- `assignment` – assignment details
-- `group` – group information
-- `group_memb` – group members
-- `submissions` – submission tracking
+- `user` - stores students/admins
+- `assignment` - assignment details
+- `group` - group information
+- `group_memb` - group members
+- `submissions` - submission tracking
 
 ---
 
-## 🔄 Improvements from Initial Prototype (Round-2 Enhancements)
+## Improvements from Initial Prototype (Round-2 Enhancements)
 
-### 🔧 Backend Improvements
+###  Backend Improvements
 - Refactored API structure (separated assignment & submission logic)
 - Implemented full assignment lifecycle:
-  - Pending → Submitted → Acknowledged
+  - Pending - Submitted - Acknowledged
 - Added group leader validation for acknowledgment
 - Improved database schema:
   - Added `submitted`, `acknowledged` fields
