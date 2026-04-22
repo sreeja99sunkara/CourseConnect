@@ -1,11 +1,21 @@
 const express = require("express");
 const router = express.Router();
-const { createAssignment, getAssignments, submitAssignment, getSubmissions } = require("../controllers/assignmentController");
+
+const {
+  createAssignment,
+  getAssignments,
+  getSubmissions
+} = require("../controllers/assignmentController");
+
 const { verifyToken } = require("../middleware/authMiddleware");
 
+//Professor
 router.post("/create", verifyToken, createAssignment);
-router.get("/all", verifyToken, getAssignments);
-router.post("/submit", verifyToken, submitAssignment);
-router.get("/submissions", verifyToken, getSubmissions);
+
+// Student + Professor
+router.get("/", verifyToken, getAssignments);
+
+// Professor analytics
+router.get("/:id/submissions", verifyToken, getSubmissions);
 
 module.exports = router;

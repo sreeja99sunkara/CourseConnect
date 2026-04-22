@@ -3,131 +3,148 @@ import API from "../services/api";
 import '../dashboard.css';
 
 function Dashboard() {
-  const [groupName, setGroupName] = useState("");
   const [assignments, setAssignments] = useState([]);
   const [groupId, setGroupId] = useState("");
+  const [groupName, setGroupName] = useState("");
   const [memberEmail, setMemberEmail] = useState("");
 
-  const [groups, setGroups] = useState([]);
-
-const fetchGroups = async () => {
-  const res = await API.get("/api/group/all");
-  setGroups(res.data);
-};
-
-useEffect(() => {
-  fetchAssignments();
-  fetchGroups();
-}, []);
-  //Add Members
-  const addMember = async () => {
-  if (!groupId) {
-    alert("Create a group first");
-    return;
-  }
-
-  try {
-    await API.post("/api/group/add-member", {
-      groupId,
-      email: memberEmail,
-    });
-
-    alert("Member added");
-    setMemberEmail("");
-  } catch (err) {
-    alert(err.response?.data?.message || "Error adding member");
-  }
-};
-
-  // Create Group
-  const createGroup = async () => {
-    const res = await API.post("/api/group/create", { name: groupName });
-    setGroupId(res.data.groupid);
-    alert("Group created");
-  };
-
-
-
-  // Get Assignments
   const fetchAssignments = async () => {
-    const res = await API.get("/api/assignment/all");
+  try {
+    const res = await API.get("/api/assignment");
     setAssignments(res.data);
-  };
-
-  // Submit Assignment
-  const submitAssignment = async (assignmentId) => {
-  if (!groupId) {
-    alert("Create a group first");
-    return;
+  } catch (err) {
+    console.log("FULL ERROR:", err.response?.data);
+    alert("Error loading assignments");
   }
-
-  await API.post("/api/assignment/submit", {
-    groupId,
-    assignmentId,
-  });
-  alert("Submitted");
 };
 
   useEffect(() => {
     fetchAssignments();
   }, []);
 
+  // CREATE GROUP
+  const createGroup = async () => {
+    const res = await API.post("/api/group/create", { name: groupName });
+    setGroupId(res.data.groupid);
+    alert("Group created");
+  };
+
+  // ADD MEMBER
+  const addMember = async () => {
+    await API.post("/api/group/add-member", {
+      groupId,
+      email: memberEmail,
+    });
+    alert("Member added");
+  };
+
+  // SUBMIT
+  const submitAssignment = async (assignmentId) => {
+  if (!groupId) {
+    alert("Please create/select a group first");
+    return;
+  }
+
+  try {
+    await API.post("/api/submission/submit", {
+      assignmentId,
+      groupId,
+    });
+
+    alert("Submitted");
+    fetchAssignments();
+
+  } catch (err) {
+    console.log(err.response?.data);
+    alert("Submission failed");
+  }
+};
+
+  // ACKNOWLEDGE (LEADER ONLY)
+  const acknowledge = async (groupId) => {
+    await API.post("/api/submission/acknowledge", { groupId });
+    alert("Acknowledged");
+    fetchAssignments();
+  };
+
   return (
-  <div className="dashboard">
-    <div className="dashboard-container">
+    <div className="dashboard">
+      <div className="dashboard-container">
+        <div className="main-card">
 
-      <div className="main-card">
+          <h2>Student Dashboard</h2>
 
-        <h2>Dashboard</h2>
-
-        {/* 🔹 CREATE GROUP */}
-        <div className="section">
-          <h3>Create Group</h3>
-          <input
-            placeholder="Group Name"
-            value={groupName}
-            onChange={(e) => setGroupName(e.target.value)}
-          />
-          <button onClick={createGroup}>Create</button>
-        </div>
-
-        {/* 🔹 ADD MEMBER */}
-        <div className="section">
-          <h3>Add Member</h3>
-          <input
-            placeholder="Enter member email"
-            value={memberEmail}
-            onChange={(e) => setMemberEmail(e.target.value)}
-          />
-          <button onClick={addMember}>Add Member</button>
-        </div>
-
-        {/* 🔹 ASSIGNMENTS */}
-        <div className="section">
-          <h3>Assignments</h3>
-
-          <div className="assignment-grid">
-            {assignments.map((a) => (
-              <div className="assignment-card" key={a.id}>
-                <h4>{a.title}</h4>
-                <p>{a.desc}</p>
-
-                <a href={a.link} target="_blank" rel="noreferrer">
-                  Open Submission
-                </a>
-
-                <button onClick={() => submitAssignment(a.id)}>
-                  Submit
-                </button>
-              </div>
-            ))}
+          {/* GROUP */}
+          <div className="section">
+            <h3>Create Group</h3>
+            <input
+              placeholder="Group Name"
+              value={groupName}
+              onChange={(e) => setGroupName(e.target.value)}
+            />
+            <button onClick={createGroup}>Create</button>
           </div>
+
+          <div className="section">
+            <h3>Add Member</h3>
+            <input
+              placeholder="Email"
+              value={memberEmail}
+              onChange={(e) => setMemberEmail(e.target.value)}
+            />
+            <button onClick={addMember}>Add</button>
+          </div>
+
+          {/* ASSIGNMENTS */}
+          <div className="section">
+            <h3>Assignments</h3>
+
+            <div className="assignment-grid">
+              {assignments.map((a) => (
+                <div key={a.id} className="assignment-card">
+
+                  <h4>{a.title}</h4>
+                  <p>{a.description}</p>
+                  <div className="progress-container">
+                    <div className="progress-fill"
+                        style={{width: a.status === "acknowledged"? "100%": a.status === "submitted"? "60%": "10%",}}
+                      />
+                  </div>
+
+                  <p>
+                    Status: 
+                    <b style={{ color:
+                      a.status === "acknowledged" ? "green" :
+                      a.status === "submitted" ? "blue" : "orange"
+                    }}>
+                      {" "}{a.status}
+                    </b>
+                  </p>
+
+                  {/* SUBMIT */}
+                  {a.status === "pending" && (
+                    <button onClick={() => submitAssignment(a.id)}>
+                      Submit
+                    </button>
+                  )}
+
+                  {/* ACKNOWLEDGE */}
+                  {a.isLeader && a.status === "submitted" && (
+                    <button onClick={() => acknowledge(a.groupId)}>
+                      Acknowledge
+                    </button>
+                  )}
+
+                </div>
+              ))}
+            </div>
+
+          </div>
+
         </div>
-
       </div>
-
     </div>
-  </div>
-);}
+  );
+}
 
 export default Dashboard;

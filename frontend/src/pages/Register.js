@@ -19,7 +19,7 @@ function Register() {
       name: form.name,
       email: form.email,
       password: form.password,
-      role: "student"   // ✅ MUST ADD
+      role: "student"   
     });
 
     alert("Registered successfully");

@@ -15,15 +15,15 @@ function Login() {
       password,
     });
 
-    // ✅ Save token
+    // Save token
     localStorage.setItem("token", res.data.token);
 
-    // ✅ Save role
+    // Save role
     localStorage.setItem("role", res.data.user.role);
 
     alert("Login successful");
 
-    // 🔥 ROLE BASED REDIRECT
+    // ROLE BASED REDIRECT
     if (res.data.user.role === "admin") {
       navigate("/admin");
     } else {
@@ -52,7 +52,7 @@ function Login() {
         onChange={(e) => setPassword(e.target.value)}
       />
 
-      <button onClick={handleLogin}>Log in</button>
+      <button onClick={handleLogin}>Login</button>
 
       <p className="link-text" onClick={() => navigate("/register")}>
         Not registered? Register
